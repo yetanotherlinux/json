@@ -14,7 +14,11 @@ namespace json {
 
     std::shared_ptr<JsonNode> JsonObject::FindProperty(const std::string &name) const {
         auto property{FindPropertyInternal(name, false)};
-        return property == _properties.end() ? nullptr : *property;
+        return property == _properties.end() ? nullptr : property->operator->()->GetValue();
+    }
+
+    std::shared_ptr<JsonNode> JsonObject::GetProperty(const std::string &name) const {
+        return FindPropertyInternal(name, true)->operator->()->GetValue();
     }
 
     void JsonObject::AddProperty(const std::string &name, std::shared_ptr<JsonNode> value) {

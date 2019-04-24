@@ -20,6 +20,8 @@ namespace json {
 
         std::shared_ptr<JsonNode> FindProperty(const std::string &name) const;
 
+        std::shared_ptr<JsonNode> GetProperty(const std::string &name) const;
+
         void AddProperty(const std::string &name, std::shared_ptr<JsonNode> value);
 
         void SetProperty(const std::string &name, const std::shared_ptr<JsonNode> &value);
