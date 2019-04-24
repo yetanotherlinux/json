@@ -23,6 +23,12 @@ namespace json {
         void AddProperty(const std::string &name, std::shared_ptr<JsonNode> value);
 
         void SetProperty(const std::string &name, const std::shared_ptr<JsonNode> &value);
+
+        void RemoveProperty(const std::string &name);
+
+    private:
+        std::vector<std::shared_ptr<JsonProperty>>::const_iterator FindPropertyInternal(
+                const std::string &name, bool mustExists) const;
     };
 }
 

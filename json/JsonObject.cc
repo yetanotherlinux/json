@@ -13,12 +13,8 @@ namespace json {
     }
 
     std::shared_ptr<JsonNode> JsonObject::FindProperty(const std::string &name) const {
-        for (const std::shared_ptr<JsonProperty> &property : _properties) {
-            if (property->GetName() == name) {
-                return property->GetValue();
-            }
-        }
-        return nullptr;
+        auto property{FindPropertyInternal(name, false)};
+        return property == _properties.end() ? nullptr : *property;
     }
 
     void JsonObject::AddProperty(const std::string &name, std::shared_ptr<JsonNode> value) {
@@ -26,12 +22,26 @@ namespace json {
     }
 
     void JsonObject::SetProperty(const std::string &name, const std::shared_ptr<JsonNode> &value) {
-        for (const std::shared_ptr<JsonProperty> &property : _properties) {
-            if (property->GetName() == name) {
-                property->SetValue(value);
-                return;
+        FindPropertyInternal(name, true)->operator->()->SetValue(value);
+    }
+
+    void JsonObject::RemoveProperty(const std::string &name) {
+        _properties.erase(FindPropertyInternal(name, true));
+    }
+
+    std::vector<std::shared_ptr<JsonProperty>>::const_iterator JsonObject::FindPropertyInternal(
+            const std::string &name, bool mustExists) const {
+        auto i{_properties.begin()};
+        while (i != _properties.end()) {
+            if (i->operator->()->GetName() == name) {
+                break;
+            } else {
+                ++i;
             }
         }
-        throw JsonException("Property '" + name + "' not exists");
+        if (mustExists && i == _properties.end()) {
+            throw JsonException("Property '" + name + "' not exists");
+        }
+        return i;
     }
 }
